@@ -2,7 +2,6 @@ import { SWRConfig } from 'swr'
 import fetch from '../lib/fetchJson'
 
 function MyApp({ Component, pageProps }) {
-  console.log(pageProps)
   return (
     <SWRConfig
       value={{

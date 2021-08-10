@@ -232,4 +232,7 @@ return [
 
     ],
 
+    'oauth2_client_id' => env('OAUTH2_CLIENT_ID'),
+    'oauth2_client_secret' => env('OAUTH2_CLIENT_SECRET'),
+
 ];

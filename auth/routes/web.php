@@ -30,7 +30,7 @@ Route::get('/redirect', function (Request $request) {
     $request->session()->put('state', $state = Str::random(40));
 
     $query = http_build_query([
-        'client_id' => '',
+        'client_id' => config('app.oauth2_client_id'),
         'redirect_uri' => 'http://localhost:3000/auth/callback',
         'response_type' => 'code',
         'scope' => '',
@@ -50,8 +50,8 @@ Route::get('/auth/callback', function (Request $request) {
 
     $response = Http::asForm()->post('http://nginx/oauth/token', [
         'grant_type' => 'authorization_code',
-        'client_id' => '',
-        'client_secret' => '',
+        'client_id' => config('app.oauth2_client_id'),
+        'client_secret' => config('app.oauth2_client_secret'),
         'redirect_uri' => 'http://localhost:3000/auth/callback',
         'code' => $request->code,
     ]);
