@@ -1,17 +1,15 @@
-import { GetStaticProps, GetStaticPaths } from 'next'
-
 import { Task } from '../../interfaces'
-import { sampleTaskData } from '../../utils/sample-data'
 import Layout from '../../components/Layout'
 import ListDetail from '../../components/ListDetail'
+import withSession from '../../lib/session'
+import getTaskById from '../../apiClient/getTaskById'
 
 type Props = {
-  item?: Task
+  task?: Task
   errors?: string
 }
 
-const StaticPropsDetail = ({ item, errors }: Props) => {
-  console.log(item)
+const SsrTaskDetail = ({ task, errors }: Props) => {
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -25,38 +23,30 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
   return (
     <Layout
       title={`${
-        item ? item.title : 'User Detail'
+        task ? task.title : 'User Detail'
       } | Next.js + TypeScript Example`}
     >
-      {item && <ListDetail item={item} />}
+      {task && <ListDetail item={task} />}
     </Layout>
   )
 }
 
-export default StaticPropsDetail
+export default SsrTaskDetail
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Get the paths we want to pre-render based on users
-  const paths = sampleTaskData.map((task) => ({
-    params: { id: task.id.toString() },
-  }))
+export const getServerSideProps = withSession(async ({ req, res, query }) => {
+  const accessToken = req.session.get("access_token")
 
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false }
-}
-
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries.
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  try {
-    const id = params?.id
-    const item = sampleTaskData.find((data) => data.id === Number(id))
-    // By returning { props: item }, the StaticPropsDetail component
-    // will receive `item` as a prop at build time
-    return { props: { item } }
-  } catch (err) {
-    return { props: { errors: err.message } }
+  if (accessToken === undefined) {
+    res.setHeader("location", "/")
+    res.statusCode = 302
+    res.end()
+    return { props: { tasks: [] } }
   }
-}
+
+  const id = query?.id
+  const response = await getTaskById(accessToken, Number(id))
+
+  return {
+    props: { task: response.task, errors: response.error?.message || null },
+  }
+})

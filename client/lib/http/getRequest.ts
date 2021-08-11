@@ -16,6 +16,7 @@ const getRequest = async (url: string, query?: { [key: string]: string }, header
     })
 
     const data = await response.json()
+    console.log(data)
 
     if (response.ok) {
       return data
@@ -31,6 +32,7 @@ const getRequest = async (url: string, query?: { [key: string]: string }, header
     if (!error.data) {
       error.data = { message: error.message }
     }
+    console.error(error)
     throw error
   }
 }
