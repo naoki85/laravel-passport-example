@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { Task } from '../../interfaces'
-import { sampleTaskData } from '../../utils/sample-data'
 import Layout from '../../components/Layout'
 import List from '../../components/List'
 import withSession from '../../lib/session'
+import getTasks from '../../apiClient/getTasks'
 
 type Props = {
   tasks: Task[]
@@ -29,7 +29,6 @@ const SsrTasksIndex = (props: Props) => {
 
 export const getServerSideProps = withSession(async ({ req, res }) => {
   const accessToken = req.session.get("access_token")
-  console.log(accessToken)
 
   if (accessToken === undefined) {
     res.setHeader("location", "/")
@@ -38,10 +37,10 @@ export const getServerSideProps = withSession(async ({ req, res }) => {
     return { props: { tasks: [] } }
   }
 
-  const tasks: Task[] = sampleTaskData
+  const response = await getTasks(accessToken)
 
   return {
-    props: { tasks: tasks },
+    props: { tasks: response.tasks },
   }
 })
 
