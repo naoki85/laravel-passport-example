@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,6 +15,9 @@ func main() {
 
 	router.GET("/tasks", requireLogin(TasksHandler))
 	router.GET("/tasks/:id", requireLogin(TaskHandler))
+	router.POST("/tasks", requireLogin(CreateTaskHandler))
+	router.PUT("/tasks/:id", requireLogin(UpdateTaskHandler))
+	router.DELETE("/tasks/:id", requireLogin(DeleteTaskHandler))
 
 	http.ListenAndServe(":8000", router)
 }
@@ -79,6 +83,135 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	data := struct {
 		Task `json:"task"`
 	}{task}
+	ok(w, data)
+}
+
+func CreateTaskHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fail(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Printf("%v\n", b)
+
+	var params TaskItem
+	err = json.Unmarshal(b, &params)
+	if err != nil {
+		fail(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	sqlHandler, err := NewSqlHandler()
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	taskRepository := TaskRepository{sqlHandler}
+	userId, err := strconv.Atoi(p.ByName("userId"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	params.UserId = uint32(userId)
+
+	task, err := taskRepository.save(params)
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Task `json:"task"`
+	}{task}
+	ok(w, data)
+}
+
+func UpdateTaskHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	id, err := strconv.Atoi(p.ByName("id"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fail(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Printf("%v\n", b)
+
+	var params TaskItem
+	err = json.Unmarshal(b, &params)
+	if err != nil {
+		fail(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	sqlHandler, err := NewSqlHandler()
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	taskRepository := TaskRepository{sqlHandler}
+	userId, err := strconv.Atoi(p.ByName("userId"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	params.UserId = uint32(userId)
+
+	task, err := taskRepository.update(uint32(id), params)
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Task `json:"task"`
+	}{task}
+	ok(w, data)
+}
+
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	id, err := strconv.Atoi(p.ByName("id"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	sqlHandler, err := NewSqlHandler()
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	taskRepository := TaskRepository{sqlHandler}
+	userId, err := strconv.Atoi(p.ByName("userId"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = taskRepository.delete(uint32(id), uint32(userId))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Message string `json:"message"`
+	}{"success"}
 	ok(w, data)
 }
 
