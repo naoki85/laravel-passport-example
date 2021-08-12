@@ -29,7 +29,13 @@ func TasksHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	taskRepository := TaskRepository{sqlHandler}
-	tasks, err := taskRepository.findAll(1)
+	userId, err := strconv.Atoi(p.ByName("userId"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tasks, err := taskRepository.findAll(uint32(userId))
 	if err != nil {
 		fail(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -58,7 +64,13 @@ func TaskHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	taskRepository := TaskRepository{sqlHandler}
-	task, err := taskRepository.findById(uint32(id), 1)
+	userId, err := strconv.Atoi(p.ByName("userId"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	task, err := taskRepository.findById(uint32(id), uint32(userId))
 	if err != nil {
 		fail(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -95,8 +107,9 @@ func requireLogin(next httprouter.Handle) httprouter.Handle {
 			fail(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+		p = append(p, httprouter.Param{Key: "userId", Value: strconv.Itoa(int(user.Id))})
 
-		fmt.Printf("%v\n", user)
+		fmt.Printf("user: %v\n", user)
 		next(w, r, p)
 	}
 }
