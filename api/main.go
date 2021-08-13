@@ -95,7 +95,7 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request, p httprouter.Para
 		fail(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Printf("%v\n", b)
+	fmt.Printf("%v\n", string(b))
 
 	var params TaskItem
 	err = json.Unmarshal(b, &params)

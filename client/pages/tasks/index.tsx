@@ -4,6 +4,7 @@ import Layout from '../../components/Layout'
 import List from '../../components/List'
 import withSession from '../../lib/session'
 import getTasks from '../../apiClient/getTasks'
+import NewItemForm from '../../components/NewItemForm'
 
 type Props = {
   tasks: Task[]
@@ -13,9 +14,9 @@ const SsrTasksIndex = (props: Props) => {
   return (
     <Layout title="Users List | Next.js + TypeScript Example">
       <h1>Tasks List</h1>
-      <p>
-        Example fetching data from inside <code>getStaticProps()</code>.
-      </p>
+      <div>
+        <NewItemForm />
+      </div>
       <p>You are currently on: /users</p>
       <List items={props.tasks} />
       <p>

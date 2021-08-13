@@ -9,8 +9,9 @@ export type NextIronHandlerParams = {
   query?: RequestQuery,
 }
 export type NextIronHandler = (NextIronHandlerParams) => void | Promise<void> | Promise<any>
+export type ExpressIronHandler = (NextIronRequest, NextApiResponse) => void | Promise<void>
 
-const withSession = (handler: NextIronHandler) =>
+const withSession = (handler: NextIronHandler | ExpressIronHandler) =>
   withIronSession(handler, {
     password: process.env.SECRET_COOKIE_PASSWORD,
     cookieName: 'sample-passport-client',
