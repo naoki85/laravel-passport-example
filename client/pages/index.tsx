@@ -10,9 +10,7 @@ const IndexPage = () => {
   useEffect(() => {
     (async function () {
       try {
-        console.log('hogehoge')
         const response = await fetchJson('/api/users')
-        console.log(response)
         setUser(response.user)
       } catch (err) {
         console.error(err)
