@@ -13,7 +13,7 @@ import (
 func main() {
 	router := httprouter.New()
 
-	router.GET("/user", requireLogin(TasksHandler))
+	router.GET("/user", requireLogin(UserHandler))
 	router.GET("/tasks", requireLogin(TasksHandler))
 	router.GET("/tasks/:id", requireLogin(TaskHandler))
 	router.POST("/tasks", requireLogin(CreateTaskHandler))

@@ -11,7 +11,6 @@ const handler = withSession(async (req, res) => {
     }
 
     const method = req.method
-    console.log(method)
     if (method === 'PUT') {
       const id = req.query.id
       const title = req.body.title
