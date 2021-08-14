@@ -4,6 +4,8 @@ import ListDetail from '../../components/ListDetail'
 import withSession from '../../lib/session'
 import getTaskById from '../../apiClient/getTaskById'
 import DeleteItemButton from '../../components/DeleteItemButton'
+import { useState } from 'react'
+import UpdateItemForm from '../../components/UpdateItemForm'
 
 type Props = {
   task?: Task
@@ -11,6 +13,12 @@ type Props = {
 }
 
 const SsrTaskDetail = ({ task, errors }: Props) => {
+  const [editMode, setEditMode] = useState<boolean>(false)
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode)
+  }
+
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -24,11 +32,24 @@ const SsrTaskDetail = ({ task, errors }: Props) => {
   return (
     <Layout
       title={`${
-        task ? task.title : 'User Detail'
-      } | Next.js + TypeScript Example`}
+        task ? task.title : 'Task Detail'
+      } | Next.js + Laravel Passport Example`}
     >
       {task && <ListDetail item={task} />}
-      <DeleteItemButton id={task.id} />
+      {editMode ? (
+        <>
+          {task && <UpdateItemForm task={task} />}
+          <button onClick={toggleEditMode}>戻る</button>
+        </>
+      ) : (
+        <>
+          <button onClick={toggleEditMode}>編集</button>
+          <DeleteItemButton id={task.id} />
+        </>
+      )}
+      <>
+      </>
+
     </Layout>
   )
 }
