@@ -13,6 +13,7 @@ import (
 func main() {
 	router := httprouter.New()
 
+	router.GET("/user", requireLogin(TasksHandler))
 	router.GET("/tasks", requireLogin(TasksHandler))
 	router.GET("/tasks/:id", requireLogin(TaskHandler))
 	router.POST("/tasks", requireLogin(CreateTaskHandler))
@@ -20,6 +21,35 @@ func main() {
 	router.DELETE("/tasks/:id", requireLogin(DeleteTaskHandler))
 
 	http.ListenAndServe(":8000", router)
+}
+
+func UserHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	sqlHandler, err := NewSqlHandler()
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	userRepository := UserRepository{sqlHandler}
+	userId, err := strconv.Atoi(p.ByName("userId"))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	user, err := userRepository.findById(uint32(userId))
+	if err != nil {
+		fail(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		User `json:"user"`
+	}{user}
+	ok(w, data)
 }
 
 func TasksHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

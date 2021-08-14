@@ -40,6 +40,8 @@ func checkToken(accessToken string) (user User, err error) {
 		return
 	}
 
+	fmt.Printf("%s\n", byteArray)
+
 	if err := json.Unmarshal(byteArray, &user); err != nil {
 		return user, err
 	}
