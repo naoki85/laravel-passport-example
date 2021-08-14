@@ -49,5 +49,7 @@ services:
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret
       TZ: Asia/Tokyo
+  memcached:
+    image: memcached
 volumes:
   db-store:
