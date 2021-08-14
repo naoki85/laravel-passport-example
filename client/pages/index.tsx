@@ -20,15 +20,12 @@ const IndexPage = () => {
   }, [])
 
   return (
-    <Layout title="Home | Next.js + TypeScript Example">
-      {user && (
+    <Layout title="Home | Next.js + Laravel Passport Example">
+      {user ? (
         <h1>{`Hello ${user.name} 👋`}</h1>
+      ) : (
+        <p>Loading</p>
       )}
-      <p>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-      </p>
     </Layout>
   )
 }
