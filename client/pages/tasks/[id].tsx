@@ -3,6 +3,7 @@ import Layout from '../../components/Layout'
 import ListDetail from '../../components/ListDetail'
 import withSession from '../../lib/session'
 import getTaskById from '../../apiClient/getTaskById'
+import DeleteItemButton from '../../components/DeleteItemButton'
 
 type Props = {
   task?: Task
@@ -27,6 +28,7 @@ const SsrTaskDetail = ({ task, errors }: Props) => {
       } | Next.js + TypeScript Example`}
     >
       {task && <ListDetail item={task} />}
+      <DeleteItemButton id={task.id} />
     </Layout>
   )
 }
