@@ -32,10 +32,12 @@ export const getServerSideProps = withSession(async ({ req, res }) => {
   const accessToken = req.session.get("access_token")
 
   if (accessToken === undefined) {
-    res.setHeader("location", "/")
-    res.statusCode = 302
-    res.end()
-    return { props: { tasks: [] } }
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
   }
 
   const response = await getTasks(accessToken)
