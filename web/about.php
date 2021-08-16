@@ -1,8 +1,12 @@
 <?php
-define('SESSION_COOKIE_NAME', 'laravel_session');
-define('MEMCACHED_HOST_NAME', 'memcached');
-define('LARAVEL_SESSION_PREFIX', 'laravel_cache:');
-define('LARAVEL_CACHE_PREFIX', 'login_web_');
+define('SESSION_COOKIE_NAME', getenv('SESSION_COOKIE_NAME'));
+define('MEMCACHED_HOST_NAME', getenv('MEMCACHED_HOST_NAME'));
+define('LARAVEL_SESSION_PREFIX', getenv('LARAVEL_SESSION_PREFIX'));
+define('LARAVEL_CACHE_PREFIX', getenv('LARAVEL_CACHE_PREFIX'));
+define('MYSQL_DATABASE', getenv('DB_NAME'));
+define('MYSQL_USER', getenv('DB_USER'));
+define('MYSQL_PASSWORD', getenv('DB_PASSWORD'));
+define('MYSQL_HOST', getenv('DB_HOST'));
 
 function getUserIdFromSession(string $session): int | null {
   $filtered = array_filter(unserialize($session), function($k) {
@@ -18,11 +22,21 @@ $memcached = new Memcached();
 $memcached->addServer(MEMCACHED_HOST_NAME, 11211);
 
 $user_id = null;
+$user = null;
 if (!empty($_COOKIE[SESSION_COOKIE_NAME])) {
   $session = $memcached->get(LARAVEL_SESSION_PREFIX.$_COOKIE[SESSION_COOKIE_NAME]);
   if (!empty($session)) {
     $user_id = getUserIdFromSession($session);
   }
+}
+
+if ($user_id) {
+  $dsn = 'mysql:dbname='.MYSQL_DATABASE.';host='.MYSQL_HOST;
+  $dbh = new PDO($dsn, MYSQL_USER, MYSQL_PASSWORD);
+  $sql = 'SELECT id, name FROM users WHERE id = :id LIMIT 1';
+  $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $sth->execute(array(':id' => $user_id));
+  $user = $sth->fetch();
 }
 ?>
 
@@ -34,10 +48,10 @@ if (!empty($_COOKIE[SESSION_COOKIE_NAME])) {
   </head>
   <body>
     <h1>About</h1>
-    <?php if ($user_id): ?>
-      <p>Your ID: <?= $user_id ?></p>
+    <?php if ($user): ?>
+      <p>Hello, <?= $user['name'] ?> !!</p>
     <? else: ?>
-      <p>You are not logged in.</p>
+      <p>You are not logged in. <a href="http://localhost:8080/login">Please login</a></p>
     <?php endif; ?>
   </body>
 </html>

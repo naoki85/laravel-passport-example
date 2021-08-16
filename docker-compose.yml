@@ -46,6 +46,16 @@ services:
       dockerfile: ./docker/Dockerfile
     volumes:
       - ./web:/var/www/html
+    environment:
+      DB_USER: phper
+      DB_PASSWORD: secret
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: laravel_local
+      SESSION_COOKIE_NAME: laravel_session
+      MEMCACHED_HOST_NAME: memcached
+      LARAVEL_SESSION_PREFIX: 'laravel_cache:'
+      LARAVEL_CACHE_PREFIX: 'login_web_'
     depends_on:
       - db
       - memcached
