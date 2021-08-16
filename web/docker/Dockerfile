@@ -18,8 +18,4 @@ COPY ./docker/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 
-# COPY ./composer.json /var/www/html/composer.json
-# COPY ./composer.lock /var/www/html/composer.lock
-# RUN composer install
-
 COPY ./ /var/www/html
