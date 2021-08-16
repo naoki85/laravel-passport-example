@@ -17,7 +17,7 @@ services:
     volumes:
       - ./auth:/work
       - ./web:/var/www/html
-      - ./nginx/auth.conf:/etc/nginx/conf.d/auth.conf
+      - ./nginx/auth.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/web.conf:/etc/nginx/conf.d/web.conf
     working_dir: /work
     depends_on:
