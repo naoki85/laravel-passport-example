@@ -34,8 +34,8 @@ if ($user_id) {
   $dsn = 'mysql:dbname='.MYSQL_DATABASE.';host='.MYSQL_HOST;
   $dbh = new PDO($dsn, MYSQL_USER, MYSQL_PASSWORD);
   $sql = 'SELECT id, name FROM users WHERE id = :id LIMIT 1';
-  $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-  $sth->execute(array(':id' => $user_id));
+  $sth = $dbh->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+  $sth->execute([':id' => $user_id]);
   $user = $sth->fetch();
 }
 ?>
@@ -53,5 +53,6 @@ if ($user_id) {
     <? else: ?>
       <p>You are not logged in. <a href="http://localhost:8080/login">Please login</a></p>
     <?php endif; ?>
+    <p><a href="http://localhost:3000">TOP</a></p>
   </body>
 </html>
