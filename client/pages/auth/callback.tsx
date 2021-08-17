@@ -1,14 +1,24 @@
 import Layout from '../../components/Layout'
 import withSession from '../../lib/session'
 import qs from 'querystring'
+import Link from 'next/link'
 
 const AuthCallback = () => (
   <Layout title="Users List | Next.js + TypeScript Example">
-    <h1>Loading...</h1>
+    <h1>認可時にエラーが発生しました</h1>
+    <Link href={'/auth/authorize'}>
+      <a>Login again</a>
+    </Link>
   </Layout>
 )
 
 export const getServerSideProps = withSession(async ({ req, res, query }) => {
+  if (query.state !== req.session.get("state")) {
+    return {
+      props: {}
+    }
+  }
+
   const params = {
     client_id: process.env.OAUTH2_CLIENT_ID,
     client_secret: process.env.OAUTH2_CLIENT_SECRET,
@@ -29,10 +39,12 @@ export const getServerSideProps = withSession(async ({ req, res, query }) => {
   req.session.set("expired_in", resJson.expires_in);
   req.session.set("refresh_token", resJson.refresh_token);
   await req.session.save();
-  res.setHeader("location", "/")
-  res.statusCode = 302
-  res.end()
-  return { props: {} }
+  return {
+    redirect: {
+      destination: '/',
+      permanent: false,
+    }
+  }
 })
 
 export default AuthCallback

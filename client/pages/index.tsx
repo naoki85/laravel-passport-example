@@ -2,6 +2,7 @@ import Layout from '../components/Layout'
 import { useEffect, useState } from 'react'
 import { User } from '../interfaces'
 import fetchJson from '../lib/fetchJson'
+import Link from 'next/link'
 
 const IndexPage = () => {
   const [user, setUser] = useState<User>(null)
@@ -30,7 +31,12 @@ const IndexPage = () => {
       {user ? (
         <h1>{`Hello ${user.name} 👋`}</h1>
       ) : (
-        <p>You are not logged in. <a href="http://localhost:8080/login">Please login</a></p>
+        <p>
+          You are not logged in.&nbsp;
+          <Link href={'/auth/authorize'}>
+            <a>Please login</a>
+          </Link>
+        </p>
       )}
     </Layout>
   )
