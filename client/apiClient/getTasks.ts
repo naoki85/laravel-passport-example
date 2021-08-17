@@ -1,5 +1,5 @@
 import { Task } from '../interfaces'
-import getRequest from '../lib/http/getRequest'
+import fetchJson from '../lib/fetchJson'
 
 export type getTasksResult = {
   tasks: Task[],
@@ -8,16 +8,22 @@ export type getTasksResult = {
 
 const getTasks = async (token: string): Promise<getTasksResult> => {
   try {
-    const res = await getRequest('http://localhost:8000/tasks', {}, {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
+    const res = await fetchJson('http://localhost:8000/tasks', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
     })
+    console.log(res)
 
     return {
       tasks: res.tasks,
       error: null
     }
   } catch (error) {
+    console.error(error)
+
     return {
       tasks: [],
       error

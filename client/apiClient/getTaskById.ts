@@ -1,5 +1,5 @@
 import { Task } from '../interfaces'
-import getRequest from '../lib/http/getRequest'
+import fetchJson from '../lib/fetchJson'
 
 export type getTaskByIdResult = {
   task: Task | null,
@@ -8,16 +8,22 @@ export type getTaskByIdResult = {
 
 const getTaskById = async (token: string, id: number): Promise<getTaskByIdResult> => {
   try {
-    const res = await getRequest('http://localhost:8000/tasks/' + id, {}, {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
+    const res = await fetchJson(`http://localhost:8000/tasks/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
     })
+    console.log(res)
 
     return {
       task: res.task,
       error: null
     }
   } catch (error) {
+    console.error(error)
+
     return {
       task: null,
       error

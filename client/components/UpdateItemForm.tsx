@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { useState } from 'react'
-import putRequest from '../lib/http/putRequest'
 import { Task } from '../interfaces'
 import Router from 'next/router'
+import fetchJson from '../lib/fetchJson'
 
 type UpdateItemFormProps = {
   task: Task
@@ -13,8 +13,13 @@ const UpdateItemForm = ({ task }: UpdateItemFormProps) => {
 
   const updateNewTask = async () => {
     try {
-      const res = await putRequest('/api/tasks/' + task.id, {title: title})
+      const res = await fetchJson(`/api/tasks/${task.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({title: title})
+      })
       console.log(res)
+
       Router.push('/tasks')
     } catch (err) {
       console.error(err)

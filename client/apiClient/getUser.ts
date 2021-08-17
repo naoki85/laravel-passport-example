@@ -1,5 +1,5 @@
 import { User } from '../interfaces'
-import getRequest from '../lib/http/getRequest'
+import fetchJson from '../lib/fetchJson'
 
 export type getUserResult = {
   user?: User,
@@ -8,10 +8,14 @@ export type getUserResult = {
 
 const getUser = async (token: string): Promise<getUserResult> => {
   try {
-    const res = await getRequest('http://localhost:8000/user', {}, {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
+    const res = await fetchJson('http://localhost:8000/user', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
     })
+    console.log(res)
 
     return {
       user: {
@@ -22,6 +26,8 @@ const getUser = async (token: string): Promise<getUserResult> => {
       error: null
     }
   } catch (error) {
+    console.error(error)
+
     return {
       error
     }
