@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
+import useUser from '../lib/useUser'
 
 type Props = {
   children?: ReactNode
@@ -8,6 +9,8 @@ type Props = {
 }
 
 const Layout = ({ children, title = 'This is the default title' }: Props) => {
+  const { user } = useUser()
+
   return (
     <div>
       <Head>
@@ -26,10 +29,14 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
           <Link href="/tasks">
             <a>Tasks List</a>
           </Link>
-          |{' '}
-          <Link href={'http://localhost:8080/logout'}>
-            <a>Logout</a>
-          </Link>
+          {user && (
+            <>
+              |{' '}
+              <Link href={'http://localhost:8080/logout'}>
+                <a>Logout</a>
+              </Link>
+            </>
+          )}
         </nav>
       </header>
       {children}
