@@ -26,6 +26,8 @@ Route::get('/dashboard', function () {
 
 require __DIR__.'/auth.php';
 
+Route::get('logout', '\App\Http\Controllers\Auth\AuthenticatedSessionController@destroy');
+
 Route::get('/redirect', function (Request $request) {
     $request->session()->put('state', $state = Str::random(40));
 
