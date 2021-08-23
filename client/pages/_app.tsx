@@ -8,7 +8,8 @@ function MyApp({ Component, pageProps }) {
         fetcher: fetch,
         onError: (err) => {
           console.error(err)
-        }
+        },
+        shouldRetryOnError: false
       }}
     >
       <Component {...pageProps} />
