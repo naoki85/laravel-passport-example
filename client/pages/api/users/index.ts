@@ -1,19 +1,13 @@
 import withSession from '../../../lib/session'
 import getUser from '../../../apiClient/getUser'
+import withRefresh from '../../../apiClient/withRefresh'
 
 const handler = withSession(async (req, res) => {
   try {
-    const accessToken = req.session.get("access_token")
-
-    if (accessToken === undefined) {
-      res.status(401).json({ message: 'Unauthorized', statusCode: 401 })
-      return
-    }
-
     const method = req.method
 
     if (method === 'GET') {
-      const response = await getUser(accessToken)
+      const response = await withRefresh(req.session, {}, getUser)
       if (response.error) {
         res.status(400).json({ user: response.user, message: response.error.message, statusCode: 400 })
       } else {

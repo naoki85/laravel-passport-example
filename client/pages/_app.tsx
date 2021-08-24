@@ -9,6 +9,7 @@ function MyApp({ Component, pageProps }) {
         onError: (err) => {
           console.error(err)
         },
+        initialData: null,
         shouldRetryOnError: false
       }}
     >

@@ -6,7 +6,7 @@ const IndexPage = () => {
   const { user } = useUser()
 
   return (
-    <Layout title="Home | Next.js + Laravel Passport Example">
+    <Layout title="Home | Next.js + Laravel Passport Example" isLoggedIn={!!user}>
       {user ? (
         <h1>{`Hello ${user.name} 👋`}</h1>
       ) : (

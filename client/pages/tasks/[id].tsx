@@ -6,6 +6,7 @@ import getTaskById from '../../apiClient/getTaskById'
 import DeleteItemButton from '../../components/DeleteItemButton'
 import { useState } from 'react'
 import UpdateItemForm from '../../components/UpdateItemForm'
+import useUser from '../../lib/useUser'
 
 type Props = {
   task?: Task
@@ -13,6 +14,7 @@ type Props = {
 }
 
 const SsrTaskDetail = ({ task, errors }: Props) => {
+  const { user } = useUser()
   const [editMode, setEditMode] = useState<boolean>(false)
 
   const toggleEditMode = () => {
@@ -21,7 +23,7 @@ const SsrTaskDetail = ({ task, errors }: Props) => {
 
   if (errors) {
     return (
-      <Layout title="Error | Next.js + TypeScript Example">
+      <Layout title="Error | Next.js + TypeScript Example" isLoggedIn={!!user}>
         <p>
           <span style={{ color: 'red' }}>Error:</span> {errors}
         </p>
@@ -34,6 +36,7 @@ const SsrTaskDetail = ({ task, errors }: Props) => {
       title={`${
         task ? task.title : 'Task Detail'
       } | Next.js + Laravel Passport Example`}
+      isLoggedIn={!!user}
     >
       {task && <ListDetail item={task} />}
       {editMode ? (

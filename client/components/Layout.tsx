@@ -6,11 +6,10 @@ import useUser from '../lib/useUser'
 type Props = {
   children?: ReactNode
   title?: string
+  isLoggedIn: boolean
 }
 
-const Layout = ({ children, title = 'This is the default title' }: Props) => {
-  const { user } = useUser()
-
+const Layout = ({ children, title = 'This is the default title', isLoggedIn = false }: Props) => {
   return (
     <div>
       <Head>
@@ -29,7 +28,7 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
           <Link href="/tasks">
             <a>Tasks List</a>
           </Link>
-          {user && (
+          {isLoggedIn && (
             <>
               |{' '}
               <Link href={'http://localhost:8080/logout'}>
